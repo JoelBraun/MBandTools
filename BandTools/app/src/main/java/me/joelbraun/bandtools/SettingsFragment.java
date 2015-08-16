@@ -10,9 +10,17 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
-import me.joelbraun.bandtools.dummy.DummyContent;
+import com.microsoft.band.BandClient;
+import com.microsoft.band.BandClientManager;
+import com.microsoft.band.BandException;
+import com.microsoft.band.BandInfo;
+import com.microsoft.band.BandIOException;
+import com.microsoft.band.ConnectionState;
+import com.microsoft.band.sensors.SampleRate;
 
 /**
  * A fragment representing a list of Items.
@@ -23,7 +31,17 @@ import me.joelbraun.bandtools.dummy.DummyContent;
  * Activities containing this fragment MUST implement the {@link OnFragmentInteractionListener}
  * interface.
  */
-public class SensorFragment extends Fragment implements AbsListView.OnItemClickListener {
+public class SettingsFragment extends Fragment implements AbsListView.OnItemClickListener {
+
+    RadioGroup SampleSelect;
+    RadioButton SampleSelect16;
+    RadioButton SampleSelect32;
+    RadioButton SampleSelect128;
+    RadioGroup TempSelect;
+    RadioButton TempSelectC;
+    RadioButton TempSelectF;
+    SampleRate sampleRate;
+    TempMode tempMode;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -36,20 +54,9 @@ public class SensorFragment extends Fragment implements AbsListView.OnItemClickL
 
     private OnFragmentInteractionListener mListener;
 
-    /**
-     * The fragment's ListView/GridView.
-     */
-    private AbsListView mListView;
-
-    /**
-     * The Adapter which will be used to populate the ListView/GridView with
-     * Views.
-     */
-    private ListAdapter mAdapter;
-
     // TODO: Rename and change types of parameters
-    public static SensorFragment newInstance(String param1, String param2) {
-        SensorFragment fragment = new SensorFragment();
+    public static SettingsFragment newInstance(String param1, String param2) {
+        SettingsFragment fragment = new SettingsFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -61,7 +68,7 @@ public class SensorFragment extends Fragment implements AbsListView.OnItemClickL
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public SensorFragment() {
+    public SettingsFragment() {
     }
 
     @Override
@@ -73,22 +80,42 @@ public class SensorFragment extends Fragment implements AbsListView.OnItemClickL
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-        // TODO: Change Adapter to display your content
-        mAdapter = new ArrayAdapter<DummyContent.DummyItem>(getActivity(),
-                android.R.layout.simple_list_item_1, android.R.id.text1, DummyContent.ITEMS);
+        sampleRate = SampleRate.MS128;
+
+
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_sensor, container, false);
+        View view = inflater.inflate(R.layout.fragment_settings, container, false);
+        SampleSelect = (RadioGroup) view.findViewById(R.id.SampleRateSelect);
+        SampleSelect16 = (RadioButton) view.findViewById(R.id.sample16);
+        SampleSelect32 = (RadioButton) view.findViewById(R.id.sample32);
+        SampleSelect128 = (RadioButton) view.findViewById(R.id.sample128);
+        TempSelect = (RadioGroup) view.findViewById(R.id.TempSelect);
+        TempSelectC = (RadioButton) view.findViewById(R.id.FahrSelect);
+        TempSelectF = (RadioButton) view.findViewById(R.id.CelsSelect);
 
-        // Set the adapter
-        mListView = (AbsListView) view.findViewById(android.R.id.list);
-        ((AdapterView<ListAdapter>) mListView).setAdapter(mAdapter);
+        //Select the existing sample rate
+        switch (sampleRate) {
+            case MS16:
+                SampleSelect.check(R.id.sample16);
+                break;
+            case MS32:
+                SampleSelect.check(R.id.sample32);
+                break;
+            default:
+                SampleSelect.check(R.id.sample128);
+        }
 
-        // Set OnItemClickListener so we can be notified on item clicks
-        mListView.setOnItemClickListener(this);
+        if (tempMode == TempMode.Fahrenheit)
+            TempSelect.check(R.id.FahrSelect);
+        else
+            TempSelect.check(R.id.CelsSelect);
+
+
 
         return view;
     }
@@ -115,20 +142,7 @@ public class SensorFragment extends Fragment implements AbsListView.OnItemClickL
         if (null != mListener) {
             // Notify the active callbacks interface (the activity, if the
             // fragment is attached to one) that an item has been selected.
-            mListener.onFragmentInteraction(DummyContent.ITEMS.get(position).id);
-        }
-    }
-
-    /**
-     * The default content for this Fragment has a TextView that is shown when
-     * the list is empty. If you would like to change the text, call this method
-     * to supply the text it should use.
-     */
-    public void setEmptyText(CharSequence emptyText) {
-        View emptyView = mListView.getEmptyView();
-
-        if (emptyView instanceof TextView) {
-            ((TextView) emptyView).setText(emptyText);
+            //mListener.onFragmentInteraction(DummyContent.ITEMS.get(position).id);
         }
     }
 

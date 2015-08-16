@@ -10,4 +10,12 @@
     <string name="action_example">Example action</string>
 
     <string name="action_settings">Settings</string>
+    <string name="SampleRateLabel">Sample Rate</string>
+    <string name="SampleRateDescription">Choose the sampling rate for the Accelerometer and Gyrometer.</string>
+    <string name="DataCollectionLabel">Data Collection</string>
+    <string name="DataCollectionDetails">Select the number of seconds between writes for data logging.</string>
+    <string name="TempModeDesc">Select the unit you would like to view the Skin Temperature reading in.</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

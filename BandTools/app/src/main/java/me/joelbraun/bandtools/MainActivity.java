@@ -18,9 +18,14 @@ import android.support.v4.widget.DrawerLayout;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+enum TempMode{
+    Fahrenheit,
+    Celsius
+}
+
 
 public class MainActivity extends ActionBarActivity
-        implements NavigationDrawerFragment.NavigationDrawerCallbacks, SensorFragment.OnFragmentInteractionListener {
+        implements NavigationDrawerFragment.NavigationDrawerCallbacks, SettingsFragment.OnFragmentInteractionListener, SensorFragment.OnFragmentInteractionListener {
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -54,8 +59,22 @@ public class MainActivity extends ActionBarActivity
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
         FragmentManager fragmentManager = getSupportFragmentManager();
+        Fragment fragment;
+
+        switch(position) {
+            case 0:
+                fragment = SensorFragment.newInstance("My", "Fragment");
+                break;
+            case 1:
+                fragment = SettingsFragment.newInstance("My", "Fragment");
+
+                break;
+            default:
+                fragment = new SensorFragment();
+        }
+
         fragmentManager.beginTransaction()
-                .replace(R.id.container, SensorFragment.newInstance("New","Fragment"))
+                .replace(R.id.container, fragment)
                 .commit();
     }
 
