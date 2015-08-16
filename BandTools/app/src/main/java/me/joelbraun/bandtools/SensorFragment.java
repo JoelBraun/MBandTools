@@ -3,6 +3,7 @@ package me.joelbraun.bandtools;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,9 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.TextView;
+
+import com.google.gson.Gson;
+import com.microsoft.band.sensors.SampleRate;
 
 import me.joelbraun.bandtools.dummy.DummyContent;
 
@@ -24,6 +28,8 @@ import me.joelbraun.bandtools.dummy.DummyContent;
  * interface.
  */
 public class SensorFragment extends Fragment implements AbsListView.OnItemClickListener {
+    TempMode tempMode;
+    SampleRate sampleRate;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -31,8 +37,8 @@ public class SensorFragment extends Fragment implements AbsListView.OnItemClickL
     private static final String ARG_PARAM2 = "param2";
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private String tMode;
+    private String sRate;
 
     private OnFragmentInteractionListener mListener;
 
@@ -48,11 +54,11 @@ public class SensorFragment extends Fragment implements AbsListView.OnItemClickL
     private ListAdapter mAdapter;
 
     // TODO: Rename and change types of parameters
-    public static SensorFragment newInstance(String param1, String param2) {
+    public static SensorFragment newInstance(SampleRate sRate, TempMode tMode) {
         SensorFragment fragment = new SensorFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putSerializable("SampleRate", new Gson().toJson(sRate));
+        args.putSerializable("TempMode", new Gson().toJson(tMode));
         fragment.setArguments(args);
         return fragment;
     }
@@ -69,9 +75,13 @@ public class SensorFragment extends Fragment implements AbsListView.OnItemClickL
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            tMode = getArguments().getString("SampleRate");
+            sRate = getArguments().getString("TempMode");
         }
+
+        sampleRate = new Gson().fromJson(tMode, SampleRate.class);
+        tempMode = new Gson().fromJson(sRate, TempMode.class);
+
 
         // TODO: Change Adapter to display your content
         mAdapter = new ArrayAdapter<DummyContent.DummyItem>(getActivity(),
@@ -115,6 +125,7 @@ public class SensorFragment extends Fragment implements AbsListView.OnItemClickL
         if (null != mListener) {
             // Notify the active callbacks interface (the activity, if the
             // fragment is attached to one) that an item has been selected.
+            Log.w("Verify", "Got here!");
             mListener.onFragmentInteraction(DummyContent.ITEMS.get(position).id);
         }
     }
@@ -144,7 +155,7 @@ public class SensorFragment extends Fragment implements AbsListView.OnItemClickL
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        public void onFragmentInteraction(String id);
+        void onFragmentInteraction(String SensorID);
     }
 
 }

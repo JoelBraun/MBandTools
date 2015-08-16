@@ -1,8 +1,11 @@
 package me.joelbraun.bandtools;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.internal.widget.AdapterViewCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +17,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.microsoft.band.BandClient;
 import com.microsoft.band.BandClientManager;
 import com.microsoft.band.BandException;
@@ -31,7 +35,7 @@ import com.microsoft.band.sensors.SampleRate;
  * Activities containing this fragment MUST implement the {@link OnFragmentInteractionListener}
  * interface.
  */
-public class SettingsFragment extends Fragment implements AbsListView.OnItemClickListener {
+public class SettingsFragment extends Fragment implements View.OnClickListener{
 
     RadioGroup SampleSelect;
     RadioButton SampleSelect16;
@@ -40,26 +44,22 @@ public class SettingsFragment extends Fragment implements AbsListView.OnItemClic
     RadioGroup TempSelect;
     RadioButton TempSelectC;
     RadioButton TempSelectF;
+
     SampleRate sampleRate;
+    DCSpeed DCspeed;
     TempMode tempMode;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private String sRate;
+    private String tMode;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     private OnFragmentInteractionListener mListener;
 
-    // TODO: Rename and change types of parameters
-    public static SettingsFragment newInstance(String param1, String param2) {
+    public static SettingsFragment newInstance(SampleRate sRate, TempMode tMode) {
         SettingsFragment fragment = new SettingsFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putSerializable("SampleRate", new Gson().toJson(sRate));
+        args.putString("TempMode", new Gson().toJson(tMode));
         fragment.setArguments(args);
         return fragment;
     }
@@ -76,13 +76,13 @@ public class SettingsFragment extends Fragment implements AbsListView.OnItemClic
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            sRate = getArguments().getString("SampleRate");
+            tMode = getArguments().getString("TempMode");
         }
 
-        sampleRate = SampleRate.MS128;
-
-
+        sampleRate = new Gson().fromJson(sRate, SampleRate.class);
+        tempMode = new Gson().fromJson(tMode, TempMode.class);
+        Log.w("test", sampleRate.toString());
 
     }
 
@@ -115,8 +115,7 @@ public class SettingsFragment extends Fragment implements AbsListView.OnItemClic
         else
             TempSelect.check(R.id.CelsSelect);
 
-
-
+        mListener.onFragmentInteraction(sampleRate, DCspeed, tempMode);
         return view;
     }
 
@@ -125,6 +124,7 @@ public class SettingsFragment extends Fragment implements AbsListView.OnItemClic
         super.onAttach(activity);
         try {
             mListener = (OnFragmentInteractionListener) activity;
+            Log.w("masdf","asdf");
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -138,14 +138,10 @@ public class SettingsFragment extends Fragment implements AbsListView.OnItemClic
     }
 
     @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        if (null != mListener) {
-            // Notify the active callbacks interface (the activity, if the
-            // fragment is attached to one) that an item has been selected.
-            //mListener.onFragmentInteraction(DummyContent.ITEMS.get(position).id);
-        }
+    public void onClick(View view)
+    {
+        mListener.onFragmentInteraction(sampleRate, DCspeed, tempMode);
     }
-
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -158,7 +154,7 @@ public class SettingsFragment extends Fragment implements AbsListView.OnItemClic
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        public void onFragmentInteraction(String id);
+        void onFragmentInteraction(SampleRate sRate, DCSpeed dCspeed, TempMode tMode);
     }
 
 }

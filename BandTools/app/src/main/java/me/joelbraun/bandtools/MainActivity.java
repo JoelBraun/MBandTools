@@ -18,9 +18,16 @@ import android.support.v4.widget.DrawerLayout;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.microsoft.band.sensors.SampleRate;
+
 enum TempMode{
     Fahrenheit,
     Celsius
+}
+
+enum DCSpeed{
+    FiveHundred,
+    OneThousand
 }
 
 
@@ -31,6 +38,10 @@ public class MainActivity extends ActionBarActivity
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
     private NavigationDrawerFragment mNavigationDrawerFragment;
+    private TempMode tempMode = TempMode.Fahrenheit;
+    private SampleRate sampleRate = SampleRate.MS128;
+    private String sensorID;
+    private DCSpeed DCspeed = DCSpeed.FiveHundred;
 
     /**
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
@@ -63,11 +74,10 @@ public class MainActivity extends ActionBarActivity
 
         switch(position) {
             case 0:
-                fragment = SensorFragment.newInstance("My", "Fragment");
+                fragment = SensorFragment.newInstance(sampleRate, tempMode);
                 break;
             case 1:
-                fragment = SettingsFragment.newInstance("My", "Fragment");
-
+                fragment = SettingsFragment.newInstance(sampleRate, tempMode);
                 break;
             default:
                 fragment = new SensorFragment();
@@ -128,5 +138,17 @@ public class MainActivity extends ActionBarActivity
     public void onFragmentInteraction(String s)
     {
 
+    }
+
+    public void onFragmentInteraction(String SensorID, SampleRate sRate, TempMode tMode)
+    {
+        sensorID = SensorID;
+    }
+
+    public void onFragmentInteraction(SampleRate sRate, DCSpeed dCspeed, TempMode tMode)
+    {
+        sampleRate = sRate;
+        DCspeed = dCspeed;
+        tempMode = tMode;
     }
 }
