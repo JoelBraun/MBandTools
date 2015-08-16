@@ -14,6 +14,7 @@ import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
+import com.microsoft.band.BandClient;
 import com.microsoft.band.sensors.SampleRate;
 
 import me.joelbraun.bandtools.dummy.DummyContent;
@@ -30,15 +31,15 @@ import me.joelbraun.bandtools.dummy.DummyContent;
 public class SensorFragment extends Fragment implements AbsListView.OnItemClickListener {
     TempMode tempMode;
     SampleRate sampleRate;
+    BandClient Client;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+
+
 
     // TODO: Rename and change types of parameters
     private String tMode;
     private String sRate;
+    private static String client;
 
     private OnFragmentInteractionListener mListener;
 
@@ -54,11 +55,12 @@ public class SensorFragment extends Fragment implements AbsListView.OnItemClickL
     private ListAdapter mAdapter;
 
     // TODO: Rename and change types of parameters
-    public static SensorFragment newInstance(SampleRate sRate, TempMode tMode) {
+    public static SensorFragment newInstance(SampleRate sRate, TempMode tMode, BandClient client) {
         SensorFragment fragment = new SensorFragment();
         Bundle args = new Bundle();
         args.putSerializable("SampleRate", new Gson().toJson(sRate));
         args.putSerializable("TempMode", new Gson().toJson(tMode));
+        args.putSerializable("Client", new Gson().toJson(client));
         fragment.setArguments(args);
         return fragment;
     }
@@ -77,15 +79,17 @@ public class SensorFragment extends Fragment implements AbsListView.OnItemClickL
         if (getArguments() != null) {
             tMode = getArguments().getString("SampleRate");
             sRate = getArguments().getString("TempMode");
+            client = getArguments().getString("Client");
         }
 
         sampleRate = new Gson().fromJson(tMode, SampleRate.class);
         tempMode = new Gson().fromJson(sRate, TempMode.class);
+        Client = new Gson().fromJson(client, BandClient.class);
 
 
         // TODO: Change Adapter to display your content
-        mAdapter = new ArrayAdapter<DummyContent.DummyItem>(getActivity(),
-                android.R.layout.simple_list_item_1, android.R.id.text1, DummyContent.ITEMS);
+        mAdapter = new ArrayAdapter<>(getActivity(),
+                R.layout.list_item, R.id.text1, DummyContent.ITEMS);
     }
 
     @Override
@@ -157,5 +161,151 @@ public class SensorFragment extends Fragment implements AbsListView.OnItemClickL
         // TODO: Update argument type and name
         void onFragmentInteraction(String SensorID);
     }
+
+
+    /* This goes in here, but needs to be drastically improved.
+    public class appTask extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... params) {
+            try {
+                if (getConnectedBandClient()) {
+                    Log.w("CONNECTED", "SYSTEM IS CONNECTED");
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            ConnStatus.setText("Connected!");
+                        }
+                    });
+                    final BandSensorManager sensorManager = client.getSensorManager();
+
+                    tempListener = new BandSkinTemperatureEventListener() {
+                        @Override
+                        public void onBandSkinTemperatureChanged(final BandSkinTemperatureEvent bandSkinTemperatureEvent) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (bandSkinTemperatureEvent != null) {
+                                        Float f = new Float(bandSkinTemperatureEvent.getTemperature());
+                                        if (tempMode == TempMode.Fahrenheit)
+                                        {
+                                            f = (f * (9/5)) + 32;
+                                            SkinTempText.setText((f.toString().substring(0,4) + " F"));
+                                        }
+                                        else
+                                        {
+                                            SkinTempText.setText((f.toString().substring(0,4) + " C"));
+                                        }
+                                    }
+                                }
+                            });
+                        }
+                    };
+                }
+
+                pedListener = new BandPedometerEventListener() {
+                    @Override
+                    public void onBandPedometerChanged(final BandPedometerEvent bandPedometerEvent) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (bandPedometerEvent != null) {
+                                    Long l = bandPedometerEvent.getTotalSteps();
+                                    pedCount.setText(l.toString());
+
+                                }
+                            }
+                        });
+                    }
+                };
+
+                distListener = new BandDistanceEventListener() {
+                    @Override
+                    public void onBandDistanceChanged(final BandDistanceEvent bandDistanceEvent) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (bandDistanceEvent != null) {
+                                    Long l = bandDistanceEvent.getTotalDistance();
+                                    totDistance.setText(l.toString() + " cm");
+                                    Float f = bandDistanceEvent.getSpeed();
+                                    PedSpeed.setText(f.toString() + " cm/s");
+                                    MotionType mtype =bandDistanceEvent.getMotionType();
+                                    PedMode.setText(mtype.toString());
+                                }
+                            }
+                        });
+                    }
+                };
+
+                accelListener = new BandAccelerometerEventListener() {
+                    @Override
+                    public void onBandAccelerometerChanged(final BandAccelerometerEvent bandAccelerometerEvent) {
+                        runOnUiThread(
+                                new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (bandAccelerometerEvent != null) {
+                                            AccelValue.setText(String.format(" X = %.3f \n Y = %.3f\n Z = %.3f", bandAccelerometerEvent.getAccelerationX(),
+                                                    bandAccelerometerEvent.getAccelerationY(), bandAccelerometerEvent.getAccelerationZ()));
+                                        }
+                                    }
+                                });
+                    }
+                };
+
+                gyroListener = new BandGyroscopeEventListener() {
+                    @Override
+                    public void onBandGyroscopeChanged(final BandGyroscopeEvent bandGyroscopeEvent) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (bandGyroscopeEvent != null) {
+                                    GyroValue.setText(String.format(" X = %.3f \n Y = %.3f\n Z = %.3f", bandGyroscopeEvent.getAngularVelocityX(),
+                                            bandGyroscopeEvent.getAngularVelocityY(), bandGyroscopeEvent.getAngularVelocityZ()));
+                                }
+                            }
+                        });
+                    }
+                };
+
+                uvListener = new BandUVEventListener() {
+
+                    @Override
+                    public void onBandUVChanged(final BandUVEvent bandUVEvent) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (bandUVEvent != null) {
+                                    UVIndexLevel l = bandUVEvent.getUVIndexLevel();
+                                    UVValue.setText(l.toString());
+                                }
+                            }
+                        });
+                    }
+                };
+
+                client.getSensorManager().registerSkinTemperatureEventListener(tempListener);
+                client.getSensorManager().registerPedometerEventListener(pedListener);
+                client.getSensorManager().registerDistanceEventListener(distListener);
+                client.getSensorManager().registerUVEventListener(uvListener);
+          client.getSensorManager()sensorManager.registerHeartRateEventListener(hrListener);
+                if (sRate == null)
+                { sRate = SampleRate.MS128;}
+                client.getSensorManager().registerAccelerometerEventListener(accelListener, sRate);
+                client.getSensorManager().registerGyroscopeEventListener(gyroListener, sRate);
+            }
+        catch (Exception e){
+                Log.w("Not connected.", "Please make sure bluetooth is on and the band is in range.\n");
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {ConnStatus.setText("Not Connected");
+                    }
+                });
+        }
+            return null;
+        }
+    }
+     */
 
 }

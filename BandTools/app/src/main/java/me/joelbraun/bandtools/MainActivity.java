@@ -1,6 +1,7 @@
 package me.joelbraun.bandtools;
 
 import android.app.Activity;
+import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
@@ -8,6 +9,7 @@ import android.support.v4.app.FragmentManager;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -18,6 +20,21 @@ import android.support.v4.widget.DrawerLayout;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.microsoft.band.BandClient;
+import com.microsoft.band.BandClientManager;
+import com.microsoft.band.BandException;
+import com.microsoft.band.BandIOException;
+import com.microsoft.band.BandInfo;
+import com.microsoft.band.ConnectionState;
+import com.microsoft.band.sensors.BandAccelerometerEventListener;
+import com.microsoft.band.sensors.BandDistanceEventListener;
+import com.microsoft.band.sensors.BandGyroscopeEventListener;
+import com.microsoft.band.sensors.BandHeartRateEventListener;
+import com.microsoft.band.sensors.BandPedometerEventListener;
+import com.microsoft.band.sensors.BandSensorManager;
+import com.microsoft.band.sensors.BandSkinTemperatureEventListener;
+import com.microsoft.band.sensors.BandUVEventListener;
+import com.microsoft.band.sensors.HeartRateConsentListener;
 import com.microsoft.band.sensors.SampleRate;
 
 enum TempMode{
@@ -38,10 +55,26 @@ public class MainActivity extends ActionBarActivity
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
     private NavigationDrawerFragment mNavigationDrawerFragment;
+
+    //Preferences Data
     private TempMode tempMode = TempMode.Fahrenheit;
     private SampleRate sampleRate = SampleRate.MS128;
     private String sensorID;
     private DCSpeed DCspeed = DCSpeed.FiveHundred;
+    boolean SaveData;
+
+    //Client-Communication Data
+    static BandClient client = null;
+    BandInfo[] devices;
+    BandSensorManager sensorManager;
+    BandSkinTemperatureEventListener tempListener;
+    BandPedometerEventListener pedListener;
+    BandDistanceEventListener distListener;
+    BandUVEventListener uvListener;
+    BandHeartRateEventListener hrListener;
+    BandAccelerometerEventListener accListener;
+    BandGyroscopeEventListener gyroListener;
+    HeartRateConsentListener hrConsent;
 
     /**
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
@@ -64,6 +97,12 @@ public class MainActivity extends ActionBarActivity
         ActionBar bar = getSupportActionBar();
         bar.setDisplayHomeAsUpEnabled(true);
         bar.setHomeAsUpIndicator(R.drawable.ic_drawer);
+
+        try {
+            getConnectedBandClient();
+        } catch (Exception e){
+            Log.w("Error", "e");
+        }
     }
 
     @Override
@@ -74,7 +113,7 @@ public class MainActivity extends ActionBarActivity
 
         switch(position) {
             case 0:
-                fragment = SensorFragment.newInstance(sampleRate, tempMode);
+                fragment = SensorFragment.newInstance(sampleRate, tempMode, client);
                 break;
             case 1:
                 fragment = SettingsFragment.newInstance(sampleRate, tempMode);
@@ -135,12 +174,9 @@ public class MainActivity extends ActionBarActivity
         return super.onOptionsItemSelected(item);
     }
 
-    public void onFragmentInteraction(String s)
-    {
 
-    }
-
-    public void onFragmentInteraction(String SensorID, SampleRate sRate, TempMode tMode)
+/*Fragment Interaction items as defined.*/
+    public void onFragmentInteraction(String SensorID)
     {
         sensorID = SensorID;
     }
@@ -150,5 +186,46 @@ public class MainActivity extends ActionBarActivity
         sampleRate = sRate;
         DCspeed = dCspeed;
         tempMode = tMode;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (client != null){
+            try {
+                client.getSensorManager().unregisterAllListeners();
+                SaveData = false;
+            } catch (BandIOException e){
+                Log.w("Error Unregistering", e);
+            } } }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        try {
+            client.getSensorManager().registerSkinTemperatureEventListener(tempListener);
+            client.getSensorManager().registerPedometerEventListener(pedListener);
+            client.getSensorManager().registerDistanceEventListener(distListener);
+            client.getSensorManager().registerUVEventListener(uvListener);
+            client.getSensorManager().registerAccelerometerEventListener(accListener, sampleRate);
+            client.getSensorManager().registerGyroscopeEventListener(gyroListener, sampleRate);
+            client.getSensorManager().registerHeartRateEventListener(hrListener);
+        } catch (Exception e) {
+            Log.w("Error registering", e);
+        }}
+
+    private boolean getConnectedBandClient() throws InterruptedException, BandException {
+        if (client == null) {
+            devices = BandClientManager.getInstance().getPairedBands();
+            if (devices.length == 0) {
+                Log.w("ERROR","Band isn't paired with your phone...");
+                return false;
+            }
+            client = BandClientManager.getInstance().create(this, devices[0]);
+        } else if (ConnectionState.CONNECTED == client.getConnectionState()) {
+            return true;
+        }
+        Log.w("CONNECTING", "Band is connecting...");
+        return ConnectionState.CONNECTED == client.connect().await();
     }
 }

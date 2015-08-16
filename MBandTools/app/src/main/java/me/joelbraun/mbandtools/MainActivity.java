@@ -130,7 +130,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
 
-        // Set up the drawer.
+         Set up the drawer.
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
@@ -143,17 +143,17 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
         } catch (Exception e){
             Log.w("app", e);
         }
-       // new appTask().execute();
+        new appTask().execute();
     }
     @Override
     protected void onResume(){
         super.onResume();
-      //  new appTask().execute();
+        new appTask().execute();
     }
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
-        // update the main content by replacing fragments
+         update the main content by replacing fragments
         FragmentManager fragmentManager = getSupportFragmentManager();
         switch (position) {
             case 0:
@@ -161,12 +161,12 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
                         .replace(R.id.container, new SensorListFragment())
                         .commit();
                 break;
-// Left unused because there's only two fragments, and the default case does settings.
-//            case 1:
-//                fragmentManager.beginTransaction()
-//                        .replace(R.id.container, new CustomizeFragment())
-//                        .commit();
-//                break;
+ Left unused because there's only two fragments, and the default case does settings.
+            case 1:
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, new CustomizeFragment())
+                        .commit();
+                break;
             default:
                 try {
                     fragmentManager.beginTransaction()
@@ -190,9 +190,9 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if (!mNavigationDrawerFragment.isDrawerOpen()) {
-            // Only show items in the action bar relevant to this screen
-            // if the drawer is not showing. Otherwise, let the drawer
-            // decide what to show in the action bar.
+             Only show items in the action bar relevant to this screen
+             if the drawer is not showing. Otherwise, let the drawer
+             decide what to show in the action bar.
             getMenuInflater().inflate(R.menu.menu_main, menu);
             restoreActionBar();
             return true;
@@ -205,12 +205,12 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+         Handle action bar item clicks here. The action bar will
+         automatically handle clicks on the Home/Up button, so long
+         as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
+        noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
                 Intent intent = new Intent(this, SettingsActivity.class);
                 startActivity(intent);
@@ -253,7 +253,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
             if(client.getSensorManager().getCurrentHeartRateConsent() == UserConsent.GRANTED) {
 
             } else {
-                // user has not consented yet, request it
+                 user has not consented yet, request it
                 client.getSensorManager().requestHeartRateConsent(this.getParent(), hrConsent);
             }
         }
@@ -390,7 +390,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 
                     } else {
                         Intent intent = new Intent("com.android.camera.action.CROP");
-// this will open all images in the Galery
+ this will open all images in the Galery
                         intent.setDataAndType(img, "image/*");
                         intent.putExtra("crop", "true");
                         intent.putExtra("outputX", 310);
@@ -427,313 +427,313 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
     /**
      * Fragment contains the sensor readouts.
      */
-//    public static class SensorsFragment extends Fragment {
-//
-//        public class writeCSVTask extends AsyncTask<Void,Void,Void> {
-//            @Override
-//            protected Void doInBackground(Void... params) {
-//                while (SaveData) {
-//                    try {
-//                            data.add(new String[]{GyroValue.getText().toString(), AccelValue.getText().toString(), SkinTempText.getText().toString(), pedCount.getText().toString(), UVValue.getText().toString()});
-//                            Thread.sleep(1000);
-//                            mWriter.writeAll(data);
-//                            data.clear();
-//                        }
-//
-//                    catch (InterruptedException e) {
-//                        break;
-//                    }
-//                }
-//
-//                return null;
-//            }
-//
-//            @Override
-//            protected void onProgressUpdate(Void... values) {
-//
-//            }
-//
-//            @Override
-//            protected void onPreExecute()
-//            {
-//                data.add(new String[]{"Gyro Values", "Accelerometer Values","Skin Temperature", "Pedometer Count", "UV Level"});
-//                mWriter.writeAll(data);
-//                data.clear();
-//            }
-//
-//            @Override
-//            protected void onCancelled()
-//            {
-//                try {
-//                    mWriter.close();
-//                }
-//                catch (Exception e)
-//                {
-//                    Log.w("mWriter", e);
-//                }
-//            }
-//        }
-//
-//        @Override
-//        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-//                     Bundle savedInstanceState) {
-//            View rootView = inflater.inflate(R.layout.fragment_sensors, container, false);
-//            super.onCreate(savedInstanceState);
-//            ConnStatus = (TextView) rootView.findViewById(R.id.ConnectionStatus);
-//            SkinTempText = (TextView) rootView.findViewById(R.id.SkinTemp);
-//            pedCount = (TextView) rootView.findViewById(R.id.PedCount);
-//            totDistance = (TextView) rootView.findViewById(R.id.TotDistance);
-//            UVValue = (TextView) rootView.findViewById(R.id.UVValue);
-//            HRValue = (TextView) rootView.findViewById(R.id.HRValue);
-//            AccelValue =(TextView) rootView.findViewById(R.id.AccelValue);
-//            GyroValue = (TextView) rootView.findViewById(R.id.GyroValue);
-//            DCButton = (Button) rootView.findViewById(R.id.DCbutton);
-//            PedSpeed = (TextView) rootView.findViewById(R.id.PedSpeed);
-//            PedMode = (TextView) rootView.findViewById(R.id.PedMode);
-//
-//                DCButton.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//
-//                        if (devices.length > 0){
-//                            if (SaveData) {
-//                                DCButton.setText("Start Data Collection");
-//                                SaveData = false;
-//                                csvTask.cancel(true);
-//                            } else {
-//                                SaveData = true;
-//                                DCButton.setText("Stop Data Collection");
-//                                csvTask = new writeCSVTask().execute();
-//                                Toast.makeText(getActivity(), "Outputting to /sdcard/BandData.csv", Toast.LENGTH_LONG).show();
-//                            }
-//                        } else
-//                        {
-//                           // DCButton.setText("Connect a Microsoft Band to Collect Data.");
-//                            Toast.makeText(getActivity(), "Connect a Band to collect data.", Toast.LENGTH_LONG).show();
-//                        }
-//                    }
-//            });
-//            return rootView;
-//        }
-//
-//        @Override
-//        public boolean onOptionsItemSelected(MenuItem item) {
-//            // Handle action bar item clicks here. The action bar will
-//            // automatically handle clicks on the Home/Up button, so long
-//            // as you specify a parent activity in AndroidManifest.xml.
-//            int id = item.getItemId();
-//
-//            //noinspection SimplifiableIfStatement
-//            if (id == R.id.action_settings) {
-//                return true;
-//            }
-//
-//            return super.onOptionsItemSelected(item);
-//        }
-//
-//        @Override
-//        public void onResume(){
-//            super.onResume();
-//            try {
-//                if (devices[0] != null){
-//                    ConnStatus.setText("Connected!");
-//                }
-//
-//                client.getSensorManager().registerSkinTemperatureEventListener(tempListener);
-//                client.getSensorManager().registerPedometerEventListener(pedListener);
-//                client.getSensorManager().registerDistanceEventListener(distListener);
-//                client.getSensorManager().registerUVEventListener(uvListener);
-//
-//                if (sRate == null)
-//                    sRate = SampleRate.MS128;
-//                client.getSensorManager().registerAccelerometerEventListener(accelListener, sRate);
-//                client.getSensorManager().registerGyroscopeEventListener(gyroListener, sRate);
-//                client.getSensorManager().registerHeartRateEventListener(hrListener);
-//            }
-//            catch (Exception e)
-//            {
-//                Log.w("Error!!!", e);
-//            }
-//        }
-//
-//        @Override
-//        public void onPause() {
-//            super.onPause();
-//
-//            if (client != null) {
-//                try {
-//
-//                    client.getSensorManager().unregisterAllListeners();
-//                    SaveData = false;
-//
-//                } catch (BandIOException e) {
-//                    Log.w("ERROR UNREGISTERING", e);
-//                }
-//            }
-//        }
-//        /**
-//         *
-//         *  Checks for band client connection
-//         * @return is the band client connected?
-//         * @throws InterruptedException
-//         * @throws BandException
-//         */
-//    }
-//    private boolean getConnectedBandClient() throws InterruptedException, BandException {
-//        if (client == null) {
-//           devices = BandClientManager.getInstance().getPairedBands();
-//            if (devices.length == 0) {
-//                Log.w("ERROR","Band isn't paired with your phone...");
-//                return false;
-//            }
-//            client = BandClientManager.getInstance().create(this, devices[0]);
-//        } else if (ConnectionState.CONNECTED == client.getConnectionState()) {
-//            return true;
-//        }
-//        Log.w("CONNECTING", "Band is connecting...");
-//        return ConnectionState.CONNECTED == client.connect().await();
-//    }
-//
-//    public class appTask extends AsyncTask<Void, Void, Void> {
-//        @Override
-//        protected Void doInBackground(Void... params) {
-//            try {
-//                if (getConnectedBandClient()) {
-//                    Log.w("CONNECTED", "SYSTEM IS CONNECTED");
-//
-//                    runOnUiThread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            ConnStatus.setText("Connected!");
-//                        }
-//                    });
-//                    final BandSensorManager sensorManager = client.getSensorManager();
-//
-//                    tempListener = new BandSkinTemperatureEventListener() {
-//                        @Override
-//                        public void onBandSkinTemperatureChanged(final BandSkinTemperatureEvent bandSkinTemperatureEvent) {
-//                            runOnUiThread(new Runnable() {
-//                                @Override
-//                                public void run() {
-//                                    if (bandSkinTemperatureEvent != null) {
-//                                        Float f = new Float(bandSkinTemperatureEvent.getTemperature());
-//                                        if (tempMode == TempMode.Fahrenheit)
-//                                        {
-//                                            f = (f * (9/5)) + 32;
-//                                            SkinTempText.setText((f.toString().substring(0,4) + " F"));
-//                                        }
-//                                        else
-//                                        {
-//                                            SkinTempText.setText((f.toString().substring(0,4) + " C"));
-//                                        }
-//                                    }
-//                                }
-//                            });
-//                        }
-//                    };
-//                }
-//
-//                pedListener = new BandPedometerEventListener() {
-//                    @Override
-//                    public void onBandPedometerChanged(final BandPedometerEvent bandPedometerEvent) {
-//                        runOnUiThread(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                if (bandPedometerEvent != null) {
-//                                    Long l = bandPedometerEvent.getTotalSteps();
-//                                    pedCount.setText(l.toString());
-//
-//                                }
-//                            }
-//                        });
-//                    }
-//                };
-//
-//                distListener = new BandDistanceEventListener() {
-//                    @Override
-//                    public void onBandDistanceChanged(final BandDistanceEvent bandDistanceEvent) {
-//                        runOnUiThread(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                if (bandDistanceEvent != null) {
-//                                    Long l = bandDistanceEvent.getTotalDistance();
-//                                    totDistance.setText(l.toString() + " cm");
-//                                    Float f = bandDistanceEvent.getSpeed();
-//                                    PedSpeed.setText(f.toString() + " cm/s");
-//                                    MotionType mtype =bandDistanceEvent.getMotionType();
-//                                    PedMode.setText(mtype.toString());
-//                                }
-//                            }
-//                        });
-//                    }
-//                };
-//
-//                accelListener = new BandAccelerometerEventListener() {
-//                    @Override
-//                    public void onBandAccelerometerChanged(final BandAccelerometerEvent bandAccelerometerEvent) {
-//                        runOnUiThread(
-//                                new Runnable() {
-//                                    @Override
-//                                    public void run() {
-//                                        if (bandAccelerometerEvent != null) {
-//                                            AccelValue.setText(String.format(" X = %.3f \n Y = %.3f\n Z = %.3f", bandAccelerometerEvent.getAccelerationX(),
-//                                                    bandAccelerometerEvent.getAccelerationY(), bandAccelerometerEvent.getAccelerationZ()));
-//                                        }
-//                                    }
-//                                });
-//                    }
-//                };
-//
-//                gyroListener = new BandGyroscopeEventListener() {
-//                    @Override
-//                    public void onBandGyroscopeChanged(final BandGyroscopeEvent bandGyroscopeEvent) {
-//                        runOnUiThread(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                if (bandGyroscopeEvent != null) {
-//                                    GyroValue.setText(String.format(" X = %.3f \n Y = %.3f\n Z = %.3f", bandGyroscopeEvent.getAngularVelocityX(),
-//                                            bandGyroscopeEvent.getAngularVelocityY(), bandGyroscopeEvent.getAngularVelocityZ()));
-//                                }
-//                            }
-//                        });
-//                    }
-//                };
-//
-//                uvListener = new BandUVEventListener() {
-//
-//                    @Override
-//                    public void onBandUVChanged(final BandUVEvent bandUVEvent) {
-//                        runOnUiThread(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                if (bandUVEvent != null) {
-//                                    UVIndexLevel l = bandUVEvent.getUVIndexLevel();
-//                                    UVValue.setText(l.toString());
-//                                }
-//                            }
-//                        });
-//                    }
-//                };
-//
-//                client.getSensorManager().registerSkinTemperatureEventListener(tempListener);
-//                client.getSensorManager().registerPedometerEventListener(pedListener);
-//                client.getSensorManager().registerDistanceEventListener(distListener);
-//                client.getSensorManager().registerUVEventListener(uvListener);
-////          client.getSensorManager()sensorManager.registerHeartRateEventListener(hrListener);
-//                if (sRate == null)
-//                { sRate = SampleRate.MS128;}
-//                client.getSensorManager().registerAccelerometerEventListener(accelListener, sRate);
-//                client.getSensorManager().registerGyroscopeEventListener(gyroListener, sRate);
-//            }
-//        catch (Exception e){
-//                Log.w("Not connected.", "Please make sure bluetooth is on and the band is in range.\n");
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {ConnStatus.setText("Not Connected");
-//                    }
-//                });
-//        }
-//            return null;
-//        }
-//    }
+    public static class SensorsFragment extends Fragment {
+
+        public class writeCSVTask extends AsyncTask<Void,Void,Void> {
+            @Override
+            protected Void doInBackground(Void... params) {
+                while (SaveData) {
+                    try {
+                            data.add(new String[]{GyroValue.getText().toString(), AccelValue.getText().toString(), SkinTempText.getText().toString(), pedCount.getText().toString(), UVValue.getText().toString()});
+                            Thread.sleep(1000);
+                            mWriter.writeAll(data);
+                            data.clear();
+                        }
+
+                    catch (InterruptedException e) {
+                        break;
+                    }
+                }
+
+                return null;
+            }
+
+            @Override
+            protected void onProgressUpdate(Void... values) {
+
+            }
+
+            @Override
+            protected void onPreExecute()
+            {
+                data.add(new String[]{"Gyro Values", "Accelerometer Values","Skin Temperature", "Pedometer Count", "UV Level"});
+                mWriter.writeAll(data);
+                data.clear();
+            }
+
+            @Override
+            protected void onCancelled()
+            {
+                try {
+                    mWriter.close();
+                }
+                catch (Exception e)
+                {
+                    Log.w("mWriter", e);
+                }
+            }
+        }
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                     Bundle savedInstanceState) {
+            View rootView = inflater.inflate(R.layout.fragment_sensors, container, false);
+            super.onCreate(savedInstanceState);
+            ConnStatus = (TextView) rootView.findViewById(R.id.ConnectionStatus);
+            SkinTempText = (TextView) rootView.findViewById(R.id.SkinTemp);
+            pedCount = (TextView) rootView.findViewById(R.id.PedCount);
+            totDistance = (TextView) rootView.findViewById(R.id.TotDistance);
+            UVValue = (TextView) rootView.findViewById(R.id.UVValue);
+            HRValue = (TextView) rootView.findViewById(R.id.HRValue);
+            AccelValue =(TextView) rootView.findViewById(R.id.AccelValue);
+            GyroValue = (TextView) rootView.findViewById(R.id.GyroValue);
+            DCButton = (Button) rootView.findViewById(R.id.DCbutton);
+            PedSpeed = (TextView) rootView.findViewById(R.id.PedSpeed);
+            PedMode = (TextView) rootView.findViewById(R.id.PedMode);
+
+                DCButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        if (devices.length > 0){
+                            if (SaveData) {
+                                DCButton.setText("Start Data Collection");
+                                SaveData = false;
+                                csvTask.cancel(true);
+                            } else {
+                                SaveData = true;
+                                DCButton.setText("Stop Data Collection");
+                                csvTask = new writeCSVTask().execute();
+                                Toast.makeText(getActivity(), "Outputting to /sdcard/BandData.csv", Toast.LENGTH_LONG).show();
+                            }
+                        } else
+                        {
+                            DCButton.setText("Connect a Microsoft Band to Collect Data.");
+                            Toast.makeText(getActivity(), "Connect a Band to collect data.", Toast.LENGTH_LONG).show();
+                        }
+                    }
+            });
+            return rootView;
+        }
+
+        @Override
+        public boolean onOptionsItemSelected(MenuItem item) {
+             Handle action bar item clicks here. The action bar will
+             automatically handle clicks on the Home/Up button, so long
+             as you specify a parent activity in AndroidManifest.xml.
+            int id = item.getItemId();
+
+            noinspection SimplifiableIfStatement
+            if (id == R.id.action_settings) {
+                return true;
+            }
+
+            return super.onOptionsItemSelected(item);
+        }
+
+        @Override
+        public void onResume(){
+            super.onResume();
+            try {
+                if (devices[0] != null){
+                    ConnStatus.setText("Connected!");
+                }
+
+                client.getSensorManager().registerSkinTemperatureEventListener(tempListener);
+                client.getSensorManager().registerPedometerEventListener(pedListener);
+                client.getSensorManager().registerDistanceEventListener(distListener);
+                client.getSensorManager().registerUVEventListener(uvListener);
+
+                if (sRate == null)
+                    sRate = SampleRate.MS128;
+                client.getSensorManager().registerAccelerometerEventListener(accelListener, sRate);
+                client.getSensorManager().registerGyroscopeEventListener(gyroListener, sRate);
+                client.getSensorManager().registerHeartRateEventListener(hrListener);
+            }
+            catch (Exception e)
+            {
+                Log.w("Error!!!", e);
+            }
+        }
+
+        @Override
+        public void onPause() {
+            super.onPause();
+
+            if (client != null) {
+                try {
+
+                    client.getSensorManager().unregisterAllListeners();
+                    SaveData = false;
+
+                } catch (BandIOException e) {
+                    Log.w("ERROR UNREGISTERING", e);
+                }
+            }
+        }
+        /**
+         *
+         *  Checks for band client connection
+         * @return is the band client connected?
+         * @throws InterruptedException
+         * @throws BandException
+         */
+    }
+    private boolean getConnectedBandClient() throws InterruptedException, BandException {
+        if (client == null) {
+           devices = BandClientManager.getInstance().getPairedBands();
+            if (devices.length == 0) {
+                Log.w("ERROR","Band isn't paired with your phone...");
+                return false;
+            }
+            client = BandClientManager.getInstance().create(this, devices[0]);
+        } else if (ConnectionState.CONNECTED == client.getConnectionState()) {
+            return true;
+        }
+        Log.w("CONNECTING", "Band is connecting...");
+        return ConnectionState.CONNECTED == client.connect().await();
+    }
+
+    public class appTask extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... params) {
+            try {
+                if (getConnectedBandClient()) {
+                    Log.w("CONNECTED", "SYSTEM IS CONNECTED");
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            ConnStatus.setText("Connected!");
+                        }
+                    });
+                    final BandSensorManager sensorManager = client.getSensorManager();
+
+                    tempListener = new BandSkinTemperatureEventListener() {
+                        @Override
+                        public void onBandSkinTemperatureChanged(final BandSkinTemperatureEvent bandSkinTemperatureEvent) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (bandSkinTemperatureEvent != null) {
+                                        Float f = new Float(bandSkinTemperatureEvent.getTemperature());
+                                        if (tempMode == TempMode.Fahrenheit)
+                                        {
+                                            f = (f * (9/5)) + 32;
+                                            SkinTempText.setText((f.toString().substring(0,4) + " F"));
+                                        }
+                                        else
+                                        {
+                                            SkinTempText.setText((f.toString().substring(0,4) + " C"));
+                                        }
+                                    }
+                                }
+                            });
+                        }
+                    };
+                }
+
+                pedListener = new BandPedometerEventListener() {
+                    @Override
+                    public void onBandPedometerChanged(final BandPedometerEvent bandPedometerEvent) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (bandPedometerEvent != null) {
+                                    Long l = bandPedometerEvent.getTotalSteps();
+                                    pedCount.setText(l.toString());
+
+                                }
+                            }
+                        });
+                    }
+                };
+
+                distListener = new BandDistanceEventListener() {
+                    @Override
+                    public void onBandDistanceChanged(final BandDistanceEvent bandDistanceEvent) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (bandDistanceEvent != null) {
+                                    Long l = bandDistanceEvent.getTotalDistance();
+                                    totDistance.setText(l.toString() + " cm");
+                                    Float f = bandDistanceEvent.getSpeed();
+                                    PedSpeed.setText(f.toString() + " cm/s");
+                                    MotionType mtype =bandDistanceEvent.getMotionType();
+                                    PedMode.setText(mtype.toString());
+                                }
+                            }
+                        });
+                    }
+                };
+
+                accelListener = new BandAccelerometerEventListener() {
+                    @Override
+                    public void onBandAccelerometerChanged(final BandAccelerometerEvent bandAccelerometerEvent) {
+                        runOnUiThread(
+                                new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (bandAccelerometerEvent != null) {
+                                            AccelValue.setText(String.format(" X = %.3f \n Y = %.3f\n Z = %.3f", bandAccelerometerEvent.getAccelerationX(),
+                                                    bandAccelerometerEvent.getAccelerationY(), bandAccelerometerEvent.getAccelerationZ()));
+                                        }
+                                    }
+                                });
+                    }
+                };
+
+                gyroListener = new BandGyroscopeEventListener() {
+                    @Override
+                    public void onBandGyroscopeChanged(final BandGyroscopeEvent bandGyroscopeEvent) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (bandGyroscopeEvent != null) {
+                                    GyroValue.setText(String.format(" X = %.3f \n Y = %.3f\n Z = %.3f", bandGyroscopeEvent.getAngularVelocityX(),
+                                            bandGyroscopeEvent.getAngularVelocityY(), bandGyroscopeEvent.getAngularVelocityZ()));
+                                }
+                            }
+                        });
+                    }
+                };
+
+                uvListener = new BandUVEventListener() {
+
+                    @Override
+                    public void onBandUVChanged(final BandUVEvent bandUVEvent) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (bandUVEvent != null) {
+                                    UVIndexLevel l = bandUVEvent.getUVIndexLevel();
+                                    UVValue.setText(l.toString());
+                                }
+                            }
+                        });
+                    }
+                };
+
+                client.getSensorManager().registerSkinTemperatureEventListener(tempListener);
+                client.getSensorManager().registerPedometerEventListener(pedListener);
+                client.getSensorManager().registerDistanceEventListener(distListener);
+                client.getSensorManager().registerUVEventListener(uvListener);
+          client.getSensorManager()sensorManager.registerHeartRateEventListener(hrListener);
+                if (sRate == null)
+                { sRate = SampleRate.MS128;}
+                client.getSensorManager().registerAccelerometerEventListener(accelListener, sRate);
+                client.getSensorManager().registerGyroscopeEventListener(gyroListener, sRate);
+            }
+        catch (Exception e){
+                Log.w("Not connected.", "Please make sure bluetooth is on and the band is in range.\n");
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {ConnStatus.setText("Not Connected");
+                    }
+                });
+        }
+            return null;
+        }
+    }
 }
